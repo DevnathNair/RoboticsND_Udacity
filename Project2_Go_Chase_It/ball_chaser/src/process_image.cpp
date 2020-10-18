@@ -1,0 +1,83 @@
+//Udacity Project 2 
+//Devnath Nair
+//Process Image Node
+
+#include "ros/ros.h"
+#include "ball_chaser/DriveToTarget.h"
+#include "sensor_msgs/Image.h"
+
+//Global robot parameters
+float LINEAR_VEL = 0.8;
+float ANGULAR_VEL = 4;
+
+ros::ServiceClient client;
+
+void drive_robot(float linearx, float angularz)
+{
+    ball_chaser::DriveToTarget srv;
+    srv.request.linear_x = linearx;
+    srv.request.angular_z = angularz;
+    client.call(srv);
+}
+
+//Callback to process image data
+void process_image_callback(const sensor_msgs::Image img)
+{
+    int pixel_max = 255;
+    
+    
+    //Segment the array into three different areas and attempt to print out position of the ball
+   
+    int width_pos = 0;
+    int white_pixel_count = 0;
+    int width_pos_sum = 0;
+    //Since the camera angle is fixed, we can get away by scanning a very thin portion of the image, improving speed
+    int search_start = img.data.size()*4/9;
+    int search_end = img.data.size()*5/9-2;
+    //DEBUG for data type
+    //std::cout << boost::typeindex::type_id<decltype(img.width)>().pretty_name() << std::endl;
+    for(int i=search_start;i<search_end;i++)
+    {
+        //img.data.size contains individual RGB values, have to ensure that R,G,B is 255 else, a fully R or G or B ball will be detected.
+        if((int)img.data[i] == pixel_max && (int)img.data[i+1] == pixel_max && (int)img.data[i+2] == pixel_max)
+        {
+           width_pos = (i%(img.width*3))/3;
+           width_pos_sum += width_pos;
+           white_pixel_count += 1;
+        }
+    }
+      
+    if (white_pixel_count == 0)
+    {
+        drive_robot(0,0);
+        std::cout<<"STOP"<<std::endl;            
+    }
+        
+    else 
+    {
+        int img_x = width_pos_sum / white_pixel_count;
+        if (img_x < (int) img.width/3)
+        {
+        drive_robot(LINEAR_VEL,ANGULAR_VEL);
+        std::cout<<"LEFT"<<std::endl;}
+        else if (img_x > (int) img.width*2/3)
+        {drive_robot(LINEAR_VEL,-ANGULAR_VEL);
+        std::cout<<"RIGHT"<<std::endl;}
+        else 
+        {drive_robot(LINEAR_VEL,0.0);
+        std::cout<<"FORWARD"<<std::endl;}
+    }
+}
+
+int main(int argc, char** argv)
+{
+    // Initialize the process_image node and create a handle to it
+    ros::init(argc, argv, "process_image");
+    ros::NodeHandle n;
+    // Define a client service capable of requesting services from command_robot
+    client = n.serviceClient<ball_chaser::DriveToTarget>("/ball_chaser/command_robot");
+    // Subscribe to /camera/rgb/image_raw topic to read the image data inside the process_image_callback function
+    ros::Subscriber sub1 = n.subscribe("/camera/rgb/image_raw", 10, process_image_callback);
+    ros::spin();
+    return 0;
+}
