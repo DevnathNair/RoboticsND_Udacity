@@ -1,6 +1,5 @@
-//Udacity Project 2 
-//Devnath Nair
-//Process Image Node
+//Udacity Project 2 - Go Chase It
+//Segments camera data into three zones so as to determine the direction in which the robot should traverse in
 
 #include "ros/ros.h"
 #include "ball_chaser/DriveToTarget.h"
@@ -24,20 +23,16 @@ void drive_robot(float linearx, float angularz)
 void process_image_callback(const sensor_msgs::Image img)
 {
     int pixel_max = 255;
-    
-    
-    //Segment the array into three different areas and attempt to print out position of the ball
-   
     int width_pos = 0;
     int white_pixel_count = 0;
     int width_pos_sum = 0;
-    //Since the camera angle is fixed, we can get away by scanning a very thin portion of the image, improving speed
+    //Fixed Camera Angle, scan a thin portion of the image, reducing computation time
     int search_start = img.data.size()*4/9;
     int search_end = img.data.size()*5/9-2;
-    //DEBUG for data type
     //std::cout << boost::typeindex::type_id<decltype(img.width)>().pretty_name() << std::endl;
-    for(int i=search_start;i<search_end;i++)
-    {
+    
+	for(int i=search_start;i<search_end;i++)
+    	{	
         //img.data.size contains individual RGB values, have to ensure that R,G,B is 255 else, a fully R or G or B ball will be detected.
         if((int)img.data[i] == pixel_max && (int)img.data[i+1] == pixel_max && (int)img.data[i+2] == pixel_max)
         {
@@ -47,7 +42,8 @@ void process_image_callback(const sensor_msgs::Image img)
         }
     }
       
-    if (white_pixel_count == 0)
+//Bot Behaviour 
+   if (white_pixel_count == 0)
     {
         drive_robot(0,0);
         std::cout<<"STOP"<<std::endl;            

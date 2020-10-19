@@ -1,5 +1,4 @@
 //Udacity Project 2 
-//Devnath Nair
 //Drive Bot Node
 
 #include "ros/ros.h"
@@ -23,9 +22,8 @@ ROS_INFO("Target Received - Linear_X :%1.2f, Angular_Z:%1.2f", (float)req.linear
     ROS_INFO_STREAM(res.msg_feedback);
     return true;
 }  
-// TODO: Create a handle_drive_request callback function that executes whenever a drive_bot service is requested
-// This function should publish the requested linear x and angular velocities to the robot wheel joints
-// After publishing the requested velocities, a message feedback should be returned with the requested wheel velocities
+
+
 int main(int argc, char** argv)
 {
     // Initialize a ROS node
@@ -33,7 +31,7 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     // Inform ROS master that we will be publishing a message of type geometry_msgs::Twist on the robot actuation topic with a publishing queue size of 10
     motor_command_publisher = n.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
-    // TODO: Define a drive /ball_chaser/command_robot service with a handle_drive_request callback function
+    //Define a drive /ball_chaser/command_robot service with a handle_drive_request callback function
     ros::ServiceServer drive_service;
     drive_service = n.advertiseService("/ball_chaser/command_robot", handle_drive_request);
     ROS_INFO("Ready to execute drive commands");
