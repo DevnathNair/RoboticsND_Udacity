@@ -6,7 +6,7 @@
 #include "ball_chaser/DriveToTarget.h"
 #include "std_msgs/Float64.h"
 
-
+//Extract to Ros Class
 ros::Publisher motor_command_publisher;
 //Service that accepts linear and angular velocities.
 bool handle_drive_request(ball_chaser::DriveToTarget::Request& req, ball_chaser::DriveToTarget::Response& res)
