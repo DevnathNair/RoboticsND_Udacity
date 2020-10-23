@@ -37,7 +37,7 @@ int main()
     //Initial state
     double mu = 0;
     double sig = 5;
-
+    //Visualization
     matplotlibcpp::figure(1);
     matplotlibcpp::title("Actual Motion vs Prediction");
     matplotlibcpp::legend();
