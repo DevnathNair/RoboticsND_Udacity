@@ -8,6 +8,8 @@
 //Global robot parameters
 float LINEAR_VEL = 0.8;
 float ANGULAR_VEL = 4;
+//Behaviour Flag
+#define RECOVERY_BEHAVIOUR 1
 
 ros::ServiceClient client;
 
@@ -43,7 +45,12 @@ void process_image_callback(const sensor_msgs::Image img)
     }
       
 //Bot Behaviour 
-   if (white_pixel_count == 0)
+if(RECOVERY_BEHAVIOUR == 1 && white_pixel_count == 0)
+	{
+	drive_robot(0,ANGULAR_VEL*10);
+	std::cout<<"FINDING BALL"<<std::endl;
+	}
+else if (white_pixel_count == 0)
     {
         drive_robot(0,0);
         std::cout<<"STOP"<<std::endl;            
