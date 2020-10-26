@@ -16,4 +16,20 @@ Concepts explored in this project:
   - Gazebo Models
   - Gazebo Plugins
   
+## Project #2: Go Chase It
+
+![Go_Chase_It_Animation](Project_2_Go_Chase_It/Udacity_Poject_2_Go_Chase_It.gif.gif)
+
+## Description
+
+Project 2 called for a robot to be generated from an Xacro file and spawned in the Gazebo World. This robot would then follow a white ball within the world built in Project 1. 
+- The ```process_image``` node sends a serivce request to the ```drive_robot``` node which then publishes linear and angular velocity commands to a ```/cmd_vel``` topic to drive the robot left,forward or right based on the position of the ball ascertained by a camera placed on it.
+- The differential drive controller for the robot was included in coursework resources.
+
+## Concepts
+Concepts explored in this project:
+
+  - ROS Publishers, Subscribers & Services and their interactions in C++  
+  - Generation of Robot Models from Xacro files using the URDF spawner
+  - ROS message types
 
