@@ -6,7 +6,6 @@
 #include "ball_chaser/DriveToTarget.h"
 #include "std_msgs/Float64.h"
 
-//Extract to Ros Class
 ros::Publisher motor_command_publisher;
 //Service that accepts linear and angular velocities.
 bool handle_drive_request(ball_chaser::DriveToTarget::Request& req, ball_chaser::DriveToTarget::Response& res)
@@ -15,9 +14,9 @@ ROS_INFO("Target Received - Linear_X :%1.2f, Angular_Z:%1.2f", (float)req.linear
     geometry_msgs::Twist motor_command;
     motor_command.linear.x = req.linear_x;
     motor_command.angular.z = req.angular_z;
-    // Publish angles to drive the robot
+    /*Publish angles*/
     motor_command_publisher.publish(motor_command);
-    //Service returns the requested velocities.
+    /*Service returns requested velocities*/
     res.msg_feedback = "Linear Velocity Set to : " + std::to_string(motor_command.linear.x) + " , Angular Velocity Set To : " + std::to_string(motor_command.angular.z);
     ROS_INFO_STREAM(res.msg_feedback);
     return true;
@@ -35,6 +34,6 @@ int main(int argc, char** argv)
     ros::ServiceServer drive_service;
     drive_service = n.advertiseService("/ball_chaser/command_robot", handle_drive_request);
     ROS_INFO("Ready to execute drive commands");
-    ros::spin();
+    ros::spin(); 
     return 0;
 }
