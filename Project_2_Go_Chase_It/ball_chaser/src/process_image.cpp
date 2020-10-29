@@ -4,6 +4,8 @@
 #include "ros/ros.h"
 #include "ball_chaser/DriveToTarget.h"
 #include "sensor_msgs/Image.h"
+#include <RosClass.h"
+
 
 //Global robot parameters
 float LINEAR_VEL = 0.8;
@@ -19,6 +21,33 @@ void drive_robot(float linearx, float angularz)
     srv.request.linear_x = linearx;
     srv.request.angular_z = angularz;
     client.call(srv);
+}
+
+void process_image()
+{
+    RosClass SAPObject;
+    m_image = SAPObject.GetImageData();
+
+    int pixel_max = 255;
+    int width_pos = 0;
+    int white_pixel_count = 0;
+    int width_pos_sum = 0;
+    //Fixed Camera Angle, scan a thin portion of the image, reducing computation time
+    int search_start = m_image.data.size()*4/9;
+    int search_end = m_image.data.size()*5/9-2;
+    //std::cout << boost::typeindex::type_id<decltype(m_image.width)>().pretty_name() << std::endl;
+    
+	for(int i=search_start;i<search_end;i++)
+    	{	
+        //m_image.data.size contains individual RGB values, have to ensure that R,G,B is 255 else, a fully R or G or B ball will be detected.
+        if((int)m_image.data[i] == pixel_max && (int)m_image.data[i+1] == pixel_max && (int)m_image.data[i+2] == pixel_max)
+        {
+           width_pos = (i%(m_image.width*3))/3;
+           width_pos_sum += width_pos;
+           white_pixel_count += 1;
+        }
+    }
+
 }
 
 //Callback to process image data
@@ -84,3 +113,4 @@ int main(int argc, char** argv)
     ros::spin();
     return 0;
 }
+
